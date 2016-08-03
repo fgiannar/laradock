@@ -63,8 +63,8 @@ services:
         volumes:
             - ./logs/apache2:/var/log/apache2
         ports:
-            - "80:80"
-            - "443:443"
+            - "8000:80"
+            - "8001:443"
         links:
             - php-fpm
 
@@ -86,11 +86,11 @@ services:
         volumes_from:
             - volumes_data
         ports:
-            - "3306:3306"
+            - "3307:3306"
         environment:
-            MYSQL_DATABASE: homestead
-            MYSQL_USER: homestead
-            MYSQL_PASSWORD: secret
+            MYSQL_DATABASE: exitbee
+            MYSQL_USER: exitbee
+            MYSQL_PASSWORD: exitbee
             MYSQL_ROOT_PASSWORD: root
 
 ### PostgreSQL Container ####################################

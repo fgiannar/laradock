@@ -24,10 +24,10 @@ It's like Laravel Homestead but for Docker instead of Vagrant.
 	- [What is Laravel](#what-is-laravel)
 	- [Why Docker not Vagrant](#why-docker-not-vagrant)
 	- [LaraDock VS Homestead](#laradock-vs-homestead)
-- [Demo Video](#Demo)
 - [Requirements](#Requirements)
 - [Installation](#Installation)
 - [Usage](#Usage)
+- [Use custom Domain](#Use-custom-Domain)
 - [Documentation](#Documentation)
 	- [Docker](#Docker)
 		- [List current running Containers](#List-current-running-Containers)
@@ -39,23 +39,6 @@ It's like Laravel Homestead but for Docker instead of Vagrant.
 		- [Build/Re-build Containers](#Build-Re-build-Containers)
 		- [Add more Software's (Docker Images)](#Add-Docker-Images)
 		- [View the Log files](#View-the-Log-files)
-	- [Laravel](#Laravel):
-		- [Install Laravel from a Docker Container](#Install-Laravel)
-		- [Run Artisan Commands](#Run-Artisan-Commands)
-		- [Use Redis](#Use-Redis)
-		- [Use Mongo](#Use-Mongo)
-	- [PHP](#PHP)
-		- [Install PHP Extensions](#Install-PHP-Extensions)
-		- [Change the PHP-FPM Version](#Change-the-PHP-FPM-Version)
-		- [Change the PHP-CLI Version](#Change-the-PHP-CLI-Version)
-		- [Install xDebug](#Install-xDebug)
-	- [Misc](#Misc)
-		- [Use custom Domain](#Use-custom-Domain)
-		- [Enable Global Composer Build Install](#Enable-Global-Composer-Build-Install)
-		- [Install Prestissimo](#Install-Prestissimo)
-		- [Install Node + NVM](#Install-Node)
-		- [Debugging](#debugging)
-		- [Upgrading LaraDock](#upgrading-laradock)
 - [Help & Questions](#Help)
 
 
@@ -67,14 +50,14 @@ LaraDock strives to make the development experience easier.
 It contains pre-packaged Docker Images that provides you a wonderful development environment without requiring you to install PHP, NGINX, MySQL, REDIS, and any other software on your local machine.
 
 
-**Usage Overview:** 
+**Usage Overview:**
 
 Let's see how easy it is to install `NGINX`, `PHP`, `Composer`, `MySQL` and `Redis`. Then run `Laravel`.
 
-1. Get LaraDock inside your Laravel project: 
+1. Get LaraDock inside your Laravel project:
 <br>
 `git clone https://github.com/LaraDock/laradock.git`.
-2. Enter the laradock folder and run only these Containers: 
+2. Enter the laradock folder and run only these Containers:
 <br>
 `docker-compose up -d nginx mysql redis`
 3. Open your `.env` file and set `DB_HOST` to `mysql` and `REDIS_HOST` to `redis`.
@@ -168,23 +151,10 @@ Running a virtual Container is much faster than running a full virtual Machine. 
 
 
 
-
-<a name="Demo"></a>
-## Demo Video
-
-What's better than a **Demo Video**:
-
-- LaraDock v4.0 (Coming soon..)
-- LaraDock [v2.2](https://www.youtube.com/watch?v=-DamFMczwDA)
-- LaraDock [v0.3](https://www.youtube.com/watch?v=jGkyO6Is_aI)
-- LaraDock [v0.1](https://www.youtube.com/watch?v=3YQsHe6oF80)
-
-
-
 <a name="Requirements"></a>
 ## Requirements
 
-- [Git](https://git-scm.com/downloads)                                           
+- [Git](https://git-scm.com/downloads)
 - [Docker](https://www.docker.com/products/docker/)
 
 
@@ -195,17 +165,10 @@ What's better than a **Demo Video**:
 
 1 - Clone the `LaraDock` repository:
 
-**A)** If you already have a Laravel project, clone this repository on your `Laravel` root direcotry:
+Clone this repository on your `Laravel` root direcotry:
 
 ```bash
-git submodule add https://github.com/LaraDock/laradock.git
-```
->If you are not already using Git for your Laravel project, you can use `git clone` instead of `git submodule`.
-
-**B)** If you don't have a Laravel project, and you want to install Laravel from Docker, clone this repo anywhere on your machine:
-
-```bash
-git clone https://github.com/LaraDock/laradock.git
+git submodule add https://github.com/fgiannar/laradock.git
 ```
 
 
@@ -230,9 +193,7 @@ If you are using **Docker Native** (For Mac/Windows) or even for Linux, continue
 <br>
 1 - Run Containers: *(Make sure you are in the `laradock` folder before running the `docker-compose` commands).*
 
-
-
-**Example:** Running NGINX and MySQL:
+Running Apache2 and MySQL:
 
 ```bash
 docker-compose up -d  nginx mysql
@@ -245,13 +206,19 @@ You can select your own combination of Containers form the list below:
 
 **Note**: `workspace` and `php-fpm` will run automatically in most of the cases, so no need to specify them in the `up` command.
 
+**Note**: If you prefer to use your local mysql instance, omit mysql from the above command.
+
 
 
 <br>
 2 - Enter the Workspace container, to execute commands like (Artisan, Composer, PHPUnit, Gulp, ...).
 
+If you added mysql on step 1, you will need to enter the container in order to run the migrations and optionally seed:
+
 ```bash
 docker-compose exec workspace bash
+php artisan migrate
+php artisan db:seed
 ```
 <br />
 Add `--user=laradock` (example `docker-compose exec --user=laradock workspace bash`) to have files created as your host's user. (you can change the PUID (User id) and PGID (group id) variables from the `docker-compose.yml`).
@@ -259,38 +226,45 @@ Add `--user=laradock` (example `docker-compose exec --user=laradock workspace ba
 
 
 <br>
+**IMPORTANT**: Omit this step if you don't use the mysql container.
+
 3 - Edit the Laravel configurations.
 
-If you don't have a Laravel project installed yet, see [How to Install Laravel in a Docker Container](#Install-Laravel).
-
-Open your Laravel's `.env` file and set the `DB_HOST` to your `mysql`:
+Open your Laravel's `.local` file and set the `DB_PORT` to your `3307`:
 
 ```env
-DB_HOST=mysql
+DB_PORT=3307
+```
+
+<br>
+4 - Open your browser and visit your localhost address (`https://localhost:8001`).
+
+<br>
+
+5 - Use custom Domain (instead of the Docker IP)
+
+Assuming your custom domain is `app.exitbee.docker`
+
+a) Run:
+
+```
+sudo ifconfig lo0 10.0.0.1 alias
+echo "rdr pass on lo0 inet proto tcp from any to 10.0.0.1 port 80 -> 127.0.0.1 port 8001" | sudo pfctl -ef -
 ```
 
 
+b) Open your `/etc/hosts` file and map the alias address `10.10.0.1` to the `app.exitbee.docker` domain, by adding the following:
 
+```bash
+10.10.0.1 app.exitbee.docker
+```
 
-
-<br>
-4 - Open your browser and visit your localhost address (`http://localhost/`).
+2 - Open your browser and visit `{https://app.exitbee.docker}`
 
 
 
 <br>
 **Debugging**: if you are facing any problem here check the [Debugging](#debugging) section.
-
-If you need a special support. Contact me, more details in the [Help & Questions](#Help) section.
-
-
-<br>
-<a name="Documentation"></a>
-## Documentation
-
-
-<a name="Docker"></a>
-### [Docker]
 
 
 
@@ -304,8 +278,6 @@ You can also use the this command if you want to see only this project container
 ```bash
 docker-compose ps
 ```
-
-
 
 
 
@@ -467,95 +439,6 @@ docker logs {container-name}
 ```
 
 
-
-
-
-<br>
-<a name="Laravel"></a>
-### [Laravel]
-
-
-
-
-<a name="Install-Laravel"></a>
-### Install Laravel from a Docker Container
-
-1 - First you need to enter the Workspace Container.
-
-2 - Install Laravel.
-
-Example using Composer
-
-```bash
-composer create-project laravel/laravel my-cool-app "5.2.*"
-```
-
-> We recommand using `composer create-project` instead of the Laravel installer, to install Laravel.
-
-For more about the Laravel installation click [here](https://laravel.com/docs/master#installing-laravel).
-
-
-3 - Edit `docker-compose.yml` to Map the new application path:
-
-By default LaraDock assumes the Laravel application is living in the parent directory of the laradock folder.
-
-Since the new Laravel application is in the `my-cool-app` folder, we need to replace `../:/var/www/laravel` with `../my-cool-app/:/var/www/laravel`, as follow:
-
-```yaml
-    application:
-        build: ./application
-        volumes:
-            - ../my-cool-app/:/var/www/laravel
-```
-4 - Go to that folder and start working..
-
-```bash
-cd my-cool-app
-```
-
-5 - Go back to the laraDock installation steps to see how to edit the `.env` file.
-
-
-
-<br>
-<a name="Run-Artisan-Commands"></a>
-### Run Artisan Commands
-
-You can run artisan commands and many other Terminal commands from the Workspace container.
-
-1 - Make sure you have the workspace container running.
-
-```bash
-docker-compose up -d workspace // ..and all your other containers
-```
-
-2 - Find the Workspace container name:
-
-```bash
-docker-compose ps
-```
-
-3 - Enter the Workspace container:
-
-```bash
-docker-compose exec workspace bash
-```
-
-Add `--user=laradock` (example `docker-compose exec --user=laradock workspace bash`) to have files created as your host's user.
-
-
-4 - Run anything you want :)
-
-```bash
-php artisan
-```
-```bash
-Composer update
-```
-```bash
-phpunit
-```
-
 <br>
 <a name="Use-Redis"></a>
 ### Use Redis
@@ -606,335 +489,6 @@ composer require predis/predis:^1.0
 
 
 
-
-
-<br>
-<a name="Use-Mongo"></a>
-### Use Mongo
-
-1 - First install `mongo` in the Workspace and the PHP-FPM Containers:
-<br>
-a) open the `docker-compose.yml` file
-<br>
-b) search for the `INSTALL_MONGO` argument under the Workspace Container
-<br>
-c) set it to `true`
-<br>
-d) search for the `INSTALL_MONGO` argument under the PHP-FPM Container
-<br>
-e) set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_MONGO=true
-    ...
-    php-fpm:
-        build:
-            context: ./php-fpm
-            args:
-                - INSTALL_MONGO=true
-    ...
-```
-
-2 - Re-build the containers `docker-compose build workspace php-fpm`
-
-
-
-3 - Run the MongoDB Container (`mongo`) with the `docker-compose up` command.
-
-```bash
-docker-compose up -d mongo
-```
-
-
-4 - Add the MongoDB configurations to the `config/database.php` config file:
-
-```php
-'connections' => [
-
-    'mongodb' => [
-        'driver'   => 'mongodb',
-        'host'     => env('DB_HOST', 'localhost'),
-        'port'     => env('DB_PORT', 27017),
-        'database' => env('DB_DATABASE', 'database'),
-        'username' => '',
-        'password' => '',
-        'options'  => [
-            'database' => '',
-        ]
-    ],
-
-	// ...
-
-],
-```
-
-5 - Open your Laravel's `.env` file and update the following variables:
-
-- set the `DB_HOST` to your `mongo`.
-- set the `DB_PORT` to `27017`.
-- set the `DB_DATABASE` to `database`.
-
-
-6 - Finally make sure you have the `jenssegers/mongodb` package installed via Composer and its Service Provider is added.
-
-```bash
-composer require jenssegers/mongodb
-```
-More details about this [here](https://github.com/jenssegers/laravel-mongodb#installation).
-
-7 - Test it:
-
-- First let your Models extend from the Mongo Eloquent Model. Check the [documentation](https://github.com/jenssegers/laravel-mongodb#eloquent).
-- Enter the Workspace Container.
-- Migrate the Database `php artisan migrate`.
-
-
-
-
-
-
-<br>
-<a name="PHP"></a>
-### [PHP]
-
-
-
-
-
-
-<a name="Install-PHP-Extensions"></a>
-### Install PHP Extensions
-
-Before installing PHP extensions, you have to decide whether you need for the `FPM` or `CLI` because each lives on a different container, if you need it for both you have to edit both containers.
-
-The PHP-FPM extensions should be installed in `php-fpm/Dockerfile-XX`. *(replace XX with your default PHP version number)*.
-<br>
-The PHP-CLI extensions should be installed in `workspace/Dockerfile`.
-
-
-
-
-
-
-
-
-
-<br>
-<a name="Change-the-PHP-FPM-Version"></a>
-### Change the (PHP-FPM) Version
-By default **PHP-FPM 7.0** is running.
-
->The PHP-FPM is responsible of serving your application code, you don't have to change the PHP-CLI version if you are planing to run your application on different PHP-FPM version.
-
-#### A) Switch from PHP `7.0` to PHP `5.6`
-
-1 - Open the `docker-compose.yml`.
-
-2 - Search for `Dockerfile-70` in the PHP container section.
-
-3 - Change the version number, by replacing `Dockerfile-70` with `Dockerfile-56`, like this:
-
-```txt
-php-fpm:
-    build:
-        context: ./php-fpm
-        dockerfile: Dockerfile-70
-```
-
-4 - Finally rebuild the container
-
-```bash
-docker-compose build php
-```
-
-> For more details about the PHP base image, visit the [official PHP docker images](https://hub.docker.com/_/php/).
-
-
-#### B) Switch from PHP `7.0` or `5.6` to PHP `5.5`
-
-We do not natively support PHP 5.5 anymore, but you can get it in few steps:
-
-1 - Clone `https://github.com/LaraDock/php-fpm`.
-
-3 - Rename `Dockerfile-56` to `Dockerfile-55`.
-
-3 - Edit the file `FROM php:5.6-fpm` to `FROM php:5.5-fpm`.
-
-4 - Build an image from `Dockerfile-55`.
-
-5 - Open the `docker-compose.yml` file.
-
-6 - Point `php-fpm` to your `Dockerfile-55` file.
-
-
-
-
-
-
-
-
-
-
-
-
-<br>
-<a name="Change-the-PHP-CLI-Version"></a>
-### Change the PHP-CLI Version
-By default **PHP-CLI 7.0** is running.
-
->Note: it's not very essential to edit the PHP-CLI verion. The PHP-CLI is only used for the Artisan Commands & Composer. It doesn't serve your Application code, this is the PHP-FPM job.
-
-The PHP-CLI is installed in the Workspace container. To change the PHP-CLI version you need to edit the `workspace/Dockerfile`.
-
-Right now you have to manually edit the `Dockerfile` or create a new one like it's done for the PHP-FPM. (consider contributing).
-
-
-
-
-<br>
-<a name="Install-xDebug"></a>
-### Install xDebug
-
-1 - First install `xDebug` in the Workspace and the PHP-FPM Containers:
-<br>
-a) open the `docker-compose.yml` file
-<br>
-b) search for the `INSTALL_XDEBUG` argument under the Workspace Container
-<br>
-c) set it to `true`
-<br>
-d) search for the `INSTALL_XDEBUG` argument under the PHP-FPM Container
-<br>
-e) set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_XDEBUG=true
-    ...
-    php-fpm:
-        build:
-            context: ./php-fpm
-            args:
-                - INSTALL_XDEBUG=true
-    ...
-```
-
-2 - Re-build the containers `docker-compose build workspace php-fpm`
-
-
-
-<br>
-<a name="Misc"></a>
-### [Misc]
-
-
-<br>
-<a name="Use-custom-Domain"></a>
-### Use custom Domain (instead of the Docker IP)
-
-Assuming your custom domain is `laravel.dev`
-
-1 - Open your `/etc/hosts` file and map your localhost address `127.0.0.1` to the `laravel.dev` domain, by adding the following:
-
-```bash
-127.0.0.1    laravel.dev
-```
-
-2 - Open your browser and visit `{http://laravel.dev}`
-
-
-Optionally you can define the server name in the nginx config file, like this:
-
-```conf
-server_name laravel.dev;
-```
-
-
-
-<br>
-<a name="Enable-Global-Composer-Build-Install"></a>
-### Enable Global Composer Build Install
-
-Enabling Global Composer Install during the build for the container allows you to get your composer requirements installed and available in the container after the build is done.
-
-1 - open the `docker-compose.yml` file
-
-2 - search for the `COMPOSER_GLOBAL_INSTALL` argument under the Workspace Container and set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - COMPOSER_GLOBAL_INSTALL=true
-    ...
-```
-3 - now add your dependencies to `workspace/composer.json`
-
-4 - rebuild the Workspace Container `docker-compose build workspace`
-
-
-
-
-<br>
-<a name="Install-Prestissimo"></a>
-### Install Prestissimo
-
-[Prestissimo](https://github.com/hirak/prestissimo) is a plugin for composer which enables parallel install functionality.
-
-1 - Enable Running Global Composer Install during the Build:
-
-Click on this [Enable Global Composer Build Install](#Enable-Global-Composer-Build-Install) and do steps 1 and 2 only then continue here.
-
-2 - Add prestissimo as requirement in Composer:
-
-a - now open the `workspace/composer.json` file
-
-b - add `"hirak/prestissimo": "^0.3"` as requirement
-
-c - rebuild the Workspace Container `docker-compose build workspace`
-
-
-
-
-<br>
-<a name="Install-Node"></a>
-### Install Node + NVM
-
-To install NVM and NodeJS in the Workspace container
-
-1 - Open the `docker-compose.yml` file
-
-2 - Search for the `INSTALL_NODE` argument under the Workspace Container and set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_NODE=true
-    ...
-```
-
-3 - Re-build the container `docker-compose build workspace`
-
-
-
 <br>
 <a name="debugging"></a>
 ### Debugging
@@ -956,29 +510,6 @@ Use `http://127.0.0.1` (or [your Docker IP](#Find-Docker-IP-Address)) instead of
 #### I see an error message containing `address already in use`
 
 Make sure the ports for the services that you are trying to run (80, 3306, etc.) are not being used already by other programs, such as a built in `apache`/`httpd` service or other development tools you have installed.
-
-
-
-
-<br>
-<a name="upgrading-laradock"></a>
-### Upgrading LaraDock
-
-
-Moving from Docker Toolbox (VirtualBox) to Docker Native (for Mac/Windows). Requires upgrading LaraDock from v3.* to v4.*:
-
-1. Stop the docker vm `docker-machine stop {default}`
-2. Install Docker for [Mac](https://docs.docker.com/docker-for-mac/) or [Windows](https://docs.docker.com/docker-for-windows/).
-3. Upgrade LaraDock to `v4.*.*` (`git pull origin master`)
-4. Use LaraDock as you used to do: `docker-compose up -d nginx mysql`.
-
-**Note:** If you face any problem with the last step above: rebuild all your containers 
-`docker-compose build --no-cache`
-"Warnning Containers Data might be lost!"
-
-
-
-
 
 
 
