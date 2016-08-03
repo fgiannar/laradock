@@ -196,7 +196,7 @@ If you are using **Docker Native** (For Mac/Windows) or even for Linux, continue
 Running Apache2 and MySQL:
 
 ```bash
-docker-compose up -d  nginx mysql
+docker-compose up -d apache2 mysql
 ```
 
 You can select your own combination of Containers form the list below:
@@ -209,11 +209,21 @@ You can select your own combination of Containers form the list below:
 **Note**: If you prefer to use your local mysql instance, omit mysql from the above command.
 
 
-
 <br>
-2 - Enter the Workspace container, to execute commands like (Artisan, Composer, PHPUnit, Gulp, ...).
+**IMPORTANT**: Omit this step if you don't use the mysql container.
 
-If you added mysql on step 1, you will need to enter the container in order to run the migrations and optionally seed:
+2 - Edit the Laravel configurations.
+
+Open your Laravel's `.local` file and set the `DB_PORT` to your `3307`:
+
+```env
+DB_PORT=3307
+```
+<br>
+
+3 - Enter the Workspace container, to execute commands like (Artisan, Composer, PHPUnit, Gulp, ...).
+
+If you added mysql on step 2, you will need to enter the container in order to run the migrations and optionally seed:
 
 ```bash
 docker-compose exec workspace bash
@@ -221,20 +231,8 @@ php artisan migrate
 php artisan db:seed
 ```
 <br />
+
 Add `--user=laradock` (example `docker-compose exec --user=laradock workspace bash`) to have files created as your host's user. (you can change the PUID (User id) and PGID (group id) variables from the `docker-compose.yml`).
-
-
-
-<br>
-**IMPORTANT**: Omit this step if you don't use the mysql container.
-
-3 - Edit the Laravel configurations.
-
-Open your Laravel's `.local` file and set the `DB_PORT` to your `3307`:
-
-```env
-DB_PORT=3307
-```
 
 <br>
 4 - Open your browser and visit your localhost address (`https://localhost:8001`).
