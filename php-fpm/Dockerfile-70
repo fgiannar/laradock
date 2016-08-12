@@ -60,6 +60,15 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
     pecl install mongodb \
 ;fi
 
+
+# intl
+RUN buildRequirements="libicu-dev g++" \
+	&& apt-get update && apt-get install -y ${buildRequirements} \
+	&& docker-php-ext-install intl \
+	&& apt-get purge -y ${buildRequirements} \
+	&& runtimeRequirements="libicu52" \
+	&& apt-get install -y --auto-remove ${runtimeRequirements}
+
 #
 #--------------------------------------------------------------------------
 # Final Touch

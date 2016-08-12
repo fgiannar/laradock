@@ -178,7 +178,7 @@ If you are using **Docker Native** (For Mac/Windows) or even for Linux, continue
 <br>
 1 - Run Containers: *(Make sure you are in the `laradock` folder before running the `docker-compose` commands).*
 
-Running Apache2 and MySQL:
+Running Apache2, MySQL and Redis:
 
 ```bash
 docker-compose up -d apache2 mysql redis
@@ -191,18 +191,14 @@ You can select your own combination of Containers form the list below:
 
 **Note**: `workspace` and `php-fpm` will run automatically in most of the cases, so no need to specify them in the `up` command.
 
-**Note**: If you prefer to use your local mysql instance, omit mysql from the above command.
-
 
 <br>
-**IMPORTANT**: Omit this step if you don't use the mysql container.
-
 2 - Edit the Laravel configurations.
 
-Open your Laravel's `.local` file and set the `DB_PORT` to your `3307`:
+Open your Laravel's `.env` file and set:
 
-```env
-DB_PORT=3307
+```
+docker
 ```
 <br>
 
