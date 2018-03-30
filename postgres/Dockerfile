@@ -1,6 +1,6 @@
-FROM postgres:latest
+FROM postgres:alpine
 
-MAINTAINER Ben M <git@bmagg.com>
+LABEL maintainer="Ben M <git@bmagg.com>"
 
 CMD ["postgres"]
 
