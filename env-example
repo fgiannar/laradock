@@ -10,7 +10,7 @@ APPLICATION=../
 ### PHP Version ########################################################################################################
 # Select a PHP version of the Workspace and PHP-FPM containers (Does not apply to HHVM). Accepted values: 72 - 71 - 70 - 56
 
-PHP_VERSION=72
+PHP_VERSION=70
 
 ### PHP Interpreter ####################################################################################################
 # Select the PHP Interpreter. Accepted values: hhvm - php-fpm
@@ -60,7 +60,7 @@ CHANGE_SOURCE=false
 
 WORKSPACE_INSTALL_XDEBUG=false
 WORKSPACE_INSTALL_LDAP=false
-WORKSPACE_INSTALL_SOAP=false
+WORKSPACE_INSTALL_SOAP=true
 WORKSPACE_INSTALL_IMAP=false
 WORKSPACE_INSTALL_MONGO=false
 WORKSPACE_INSTALL_AMQP=false
@@ -105,7 +105,7 @@ PHP_FPM_INSTALL_IMAP=false
 PHP_FPM_INSTALL_MONGO=false
 PHP_FPM_INSTALL_AMQP=false
 PHP_FPM_INSTALL_MSSQL=false
-PHP_FPM_INSTALL_SOAP=false
+PHP_FPM_INSTALL_SOAP=true
 PHP_FPM_INSTALL_ZIP_ARCHIVE=false
 PHP_FPM_INSTALL_BCMATH=false
 PHP_FPM_INSTALL_GMP=false
@@ -131,8 +131,8 @@ PHP_WORKER_INSTALL_PGSQL=false
 
 ### NGINX ##############################################################################################################
 
-NGINX_HOST_HTTP_PORT=80
-NGINX_HOST_HTTPS_PORT=443
+NGINX_HOST_HTTP_PORT=82
+NGINX_HOST_HTTPS_PORT=444
 NGINX_HOST_LOG_PATH=./logs/nginx/
 NGINX_SITES_PATH=./nginx/sites/
 NGINX_PHP_UPSTREAM_CONTAINER=php-fpm
@@ -140,28 +140,28 @@ NGINX_PHP_UPSTREAM_PORT=9000
 
 ### APACHE #############################################################################################################
 
-APACHE_HOST_HTTP_PORT=80
-APACHE_HOST_HTTPS_PORT=443
+APACHE_HOST_HTTP_PORT=82
+APACHE_HOST_HTTPS_PORT=444
 APACHE_HOST_LOG_PATH=./logs/apache2
 APACHE_SITES_PATH=./apache2/sites
 APACHE_PHP_UPSTREAM_CONTAINER=php-fpm
 APACHE_PHP_UPSTREAM_PORT=9000
 APACHE_PHP_UPSTREAM_TIMEOUT=60
-APACHE_DOCUMENT_ROOT=/var/www/
+APACHE_DOCUMENT_ROOT=/var/www/public/
 
 ### MYSQL ##############################################################################################################
 
-MYSQL_VERSION=latest
-MYSQL_DATABASE=default
-MYSQL_USER=default
-MYSQL_PASSWORD=secret
-MYSQL_PORT=3306
+MYSQL_VERSION=5.6
+MYSQL_DATABASE=exitbee
+MYSQL_USER=exitbee
+MYSQL_PASSWORD=exitbee
+MYSQL_PORT=3307
 MYSQL_ROOT_PASSWORD=root
 MYSQL_ENTRYPOINT_INITDB=./mysql/docker-entrypoint-initdb.d
 
 ### REDIS ##############################################################################################################
 
-REDIS_PORT=6379
+REDIS_PORT=6380
 
 ### Percona ############################################################################################################
 
